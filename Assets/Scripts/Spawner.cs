@@ -4,6 +4,7 @@ using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -11,6 +12,17 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
+    private PlayerControls _playerControls;
+    private void Awake() 
+    {
+        _playerControls = new PlayerControls();
+        _playerControls.Enable();
+    }
+
+    private void OnDestroy() 
+    {
+        _playerControls.Disable();
+    }
     void INetworkRunnerCallbacks.OnPlayerJoined(NetworkRunner runner, PlayerRef player) 
     {
         if (runner.IsServer)
@@ -34,17 +46,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         var data = new NetworkInputData();
 
-        if (Input.GetKey(KeyCode.W))
-            data.Direction += Vector3.forward;
-
-        if (Input.GetKey(KeyCode.S))
-            data.Direction += Vector3.back;
-
-        if (Input.GetKey(KeyCode.A))
-            data.Direction += Vector3.left;
-
-        if (Input.GetKey(KeyCode.D))
-            data.Direction += Vector3.right;
+        // Read from new Input System
+        var move = _playerControls.Player.Move.ReadValue<Vector2>();
+        data.Direction = new Vector3(move.x, 0f, move.y);
 
         input.Set(data);
     }
