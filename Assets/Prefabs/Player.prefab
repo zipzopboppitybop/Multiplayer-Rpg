@@ -98,7 +98,7 @@ MonoBehaviour:
   jumpImpulse: 8
   acceleration: 10
   braking: 10
-  maxSpeed: 2
+  maxSpeed: 5
   rotationSpeed: 15
 --- !u!114 &6314613783973166368
 MonoBehaviour:
@@ -112,6 +112,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a7a10b2280a864a825dd9896711942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  MoveSpeed: 5
+  JumpHeight: 2
+  JumpDuration: 0.5
 --- !u!1 &3280751360544013329
 GameObject:
   m_ObjectHideFlags: 0

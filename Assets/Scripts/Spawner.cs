@@ -13,10 +13,14 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
     private PlayerControls _playerControls;
+    private bool _jumpPressed;
     private void Awake() 
     {
         _playerControls = new PlayerControls();
         _playerControls.Enable();
+
+        // Subscribing to the event directly because of weird behaviour
+        _playerControls.Player.Jump.performed += _ => _jumpPressed = true;
     }
 
     private void OnDestroy() 
@@ -49,6 +53,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         // Read from new Input System
         var move = _playerControls.Player.Move.ReadValue<Vector2>();
         data.Direction = new Vector3(move.x, 0f, move.y);
+        data.Jump = _jumpPressed;
+        _jumpPressed = false;
 
         input.Set(data);
     }

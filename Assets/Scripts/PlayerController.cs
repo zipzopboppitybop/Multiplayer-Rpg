@@ -1,19 +1,33 @@
 using Fusion;
+using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
-    private const float MoveSpeed = 5f;
+    [SerializeField] private float MoveSpeed = 5f;
     private NetworkCharacterController _cc;
+    private CharacterController _characterController;
     private void Awake()
     {
         _cc = GetComponent<NetworkCharacterController>();
+        _characterController = GetComponent<CharacterController>();
     }
 
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData data))
         {
-            data.Direction.Normalize();
-            _cc.Move(MoveSpeed * data.Direction * Runner.DeltaTime);
+            HandleMovement(data);
         }
+    }
+
+    private void HandleMovement(NetworkInputData data)
+    {
+        Vector3 move = data.Direction.normalized * MoveSpeed;
+
+        if (data.Jump)
+        {
+            _cc.Jump();
+        }
+
+        _cc.Move(move);
     }
 }
